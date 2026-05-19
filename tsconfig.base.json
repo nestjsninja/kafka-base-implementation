@@ -1,0 +1,27 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "paths": {
+      "@kafka-base-implementation/components/example-messaging": [
+        "./libs/components/example-messaging/src/index.ts"
+      ],
+      "@kafka-base-implementation/core/kafka": [
+        "./libs/core/kafka/src/index.ts"
+      ],
+      "@kafka-base-implementation/core/env": ["./libs/core/env/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
