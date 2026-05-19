@@ -22,7 +22,6 @@ export class ExampleMessagingModule
 
   static register(options: typeof OPTIONS_TYPE = {}): DynamicModule {
     return {
-      global: true,
       module: ExampleMessagingModule,
       imports: [
         KafkaModule.registerAsync({
@@ -47,7 +46,6 @@ export class ExampleMessagingModule
 
   static registerAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     return {
-      global: true,
       module: ExampleMessagingModule,
       imports: [
         ...(options.imports ?? []),
