@@ -40,7 +40,9 @@ describe('KafkaModule', () => {
     });
 
     expect(dynamicModule.module).toBe(KafkaModule);
-    expect(dynamicModule.imports).toHaveLength(2);
+    expect(dynamicModule.imports).toEqual(
+      expect.arrayContaining([ConfigModule]),
+    );
     expect(dynamicModule.providers).toContain(KafkaService);
     expect(dynamicModule.providers).toContain(KafkaAdminService);
     expect(dynamicModule.exports).toContain(KafkaService);

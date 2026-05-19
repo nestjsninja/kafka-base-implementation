@@ -278,7 +278,7 @@ import { EXAMPLE_TOPICS, ExampleMessageCreatedEvent, ExampleMessageProcessedEven
 
 Main component pieces:
 
-- `ExampleMessagingModule.forRoot({ ensureTopics: true })`: opts an app into creating the example Kafka topics on startup.
+- `ExampleMessagingModule.register({ ensureTopics: true })`: opts an app into creating the example Kafka topics on startup.
 - `EXAMPLE_KAFKA_TOPICS`: topic creation config with partitions, replication factor, and retention settings.
 - `EXAMPLE_TOPICS`: shared topic names.
 - `ExampleMessageCreatedEvent` and `ExampleMessageProcessedEvent`: shared event contracts.

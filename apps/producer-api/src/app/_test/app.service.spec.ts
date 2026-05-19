@@ -1,18 +1,18 @@
 import { Test } from '@nestjs/testing';
-import { KafkaService } from '@kafka-base-implementation/core/kafka';
-import { AppService } from './app.service';
+import { ExampleMessagingService } from '@kafka-base-implementation/components/example-messaging';
+import { AppService } from '../app.service';
 
 describe('AppService', () => {
   let service: AppService;
-  const kafkaService = { emit: jest.fn() };
+  const exampleMessagingService = { emitMessageCreated: jest.fn() };
 
   beforeAll(async () => {
     const app = await Test.createTestingModule({
       providers: [
         AppService,
         {
-          provide: KafkaService,
-          useValue: kafkaService,
+          provide: ExampleMessagingService,
+          useValue: exampleMessagingService,
         },
       ],
     }).compile();

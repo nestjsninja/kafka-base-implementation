@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_CLIENT } from './kafka.tokens';
@@ -18,8 +18,14 @@ import {
   controllers: [],
 })
 export class KafkaModule extends ConfigurableModuleClass {
+  private static readonly logger = new Logger(KafkaModule.name);
+
   static register(options: typeof OPTIONS_TYPE = {}): DynamicModule {
     const kafkaOptions = normalizeKafkaOptions(options);
+
+    this.logger.log(
+      `Registering Kafka client "${kafkaOptions.clientId}" with brokers ${kafkaOptions.brokers.join(', ')} and group "${kafkaOptions.groupId}"`,
+    );
 
     return {
       module: KafkaModule,
@@ -57,8 +63,19 @@ export class KafkaModule extends ConfigurableModuleClass {
     const optionsProvider = {
       provide: KAFKA_MODULE_OPTIONS,
       inject: options.inject,
-      useFactory: async (...args: Parameters<NonNullable<typeof options.useFactory>>) =>
-        normalizeKafkaOptions(await options.useFactory?.(...args) ?? {}),
+      useFactory: async (
+        ...args: Parameters<NonNullable<typeof options.useFactory>>
+      ) => {
+        const kafkaOptions = normalizeKafkaOptions(
+          (await options.useFactory?.(...args)) ?? {},
+        );
+
+        this.logger.log(
+          `Resolved Kafka client "${kafkaOptions.clientId}" with brokers ${kafkaOptions.brokers.join(', ')} and group "${kafkaOptions.groupId}"`,
+        );
+
+        return kafkaOptions;
+      },
     };
 
     return {

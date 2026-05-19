@@ -14,11 +14,19 @@ export class KafkaAdminService {
 
   async ensureTopics(topics: ITopicConfig[]): Promise<boolean> {
     if (!topics.length) {
+      this.logger.log('Skipping Kafka topic provisioning because no topics were configured');
       return false;
     }
 
+    const topicNames = topics.map(({ topic }) => topic).join(', ');
+    const clientId = `${this.options.clientId}-admin`;
+
+    this.logger.log(
+      `Connecting Kafka admin client "${clientId}" to provision topics: ${topicNames}`,
+    );
+
     const kafka = new Kafka({
-      clientId: `${this.options.clientId}-admin`,
+      clientId,
       brokers: this.options.brokers,
     });
     const admin = kafka.admin();
@@ -33,13 +41,20 @@ export class KafkaAdminService {
 
       this.logger.log(
         created
-          ? `Created Kafka topics: ${topics.map(({ topic }) => topic).join(', ')}`
-          : `Kafka topics already exist: ${topics.map(({ topic }) => topic).join(', ')}`,
+          ? `Created Kafka topics: ${topicNames}`
+          : `Kafka topics already exist: ${topicNames}`,
       );
 
       return created;
+    } catch (error) {
+      this.logger.error(
+        `Failed to provision Kafka topics: ${topicNames}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
     } finally {
       await admin.disconnect();
+      this.logger.log(`Kafka admin client "${clientId}" disconnected`);
     }
   }
 }

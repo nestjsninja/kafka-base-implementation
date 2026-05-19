@@ -1,9 +1,9 @@
 import {
   ExampleMessageCreatedEvent,
   ExampleMessageProcessedEvent,
-} from './example-event.interfaces';
-import { EXAMPLE_TOPICS } from './example-topic.constants';
-import { EXAMPLE_KAFKA_TOPICS } from './example-topics';
+} from '../example-event.interfaces';
+import { EXAMPLE_TOPICS } from '../example-topic.constants';
+import { EXAMPLE_KAFKA_TOPICS } from '../example-topics';
 
 describe('example message contracts', () => {
   it('defines stable topic names for the producer and consumer apps', () => {
