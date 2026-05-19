@@ -8,7 +8,7 @@
     "serve:producer": "nx serve producer-api",
     "serve:consumer": "nx serve consumer-api",
     "serve:apis": "NX_TUI=false nx run-many -t serve -p producer-api consumer-api --parallel=2",
-    "serve:dashboard": "next dev apps/dashboard -p ${DASHBOARD_PORT:-4200}",
+    "serve:dashboard": "cd apps/dashboard && ../../node_modules/.bin/next dev -p ${DASHBOARD_PORT:-4200}",
     "dev": "npm run kafka:up && (npm run serve:apis & npm run serve:dashboard & wait)",
     "test": "nx run-many -t test"
   },
