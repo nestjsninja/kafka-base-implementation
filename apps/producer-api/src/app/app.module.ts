@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ExampleMessagingModule } from '@kafka-base-implementation/components/example-messaging';
-import { KafkaConfig } from '@kafka-base-implementation/core/kafka';
 import { AppController } from './app.controller';
 import { ProducerApiConfig } from './app.config';
 import { AppKafkaController } from './app.kafka-controller';
@@ -13,9 +12,9 @@ import { AppService } from './app.service';
       cache: true,
       envFilePath: '.env',
       isGlobal: true,
-      load: [KafkaConfig, ProducerApiConfig],
+      load: [ProducerApiConfig],
     }),
-    ExampleMessagingModule.forRoot(),
+    ExampleMessagingModule.register(),
   ],
   controllers: [AppController, AppKafkaController],
   providers: [AppService],

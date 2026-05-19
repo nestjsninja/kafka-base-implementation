@@ -7,5 +7,5 @@ export const {
   OPTIONS_TYPE,
   ASYNC_OPTIONS_TYPE,
 } = new ConfigurableModuleBuilder<ExampleMessagingModuleOptions>()
-  .setClassMethodName('forRoot')
+  .setClassMethodName('register')
   .build();

@@ -19,8 +19,10 @@ import { EXAMPLE_KAFKA_TOPICS } from './example-topics';
 export class ExampleMessagingModule
   extends ConfigurableModuleClass
   implements OnModuleInit {
-  static forRoot(options: typeof OPTIONS_TYPE = {}): DynamicModule {
+
+  static register(options: typeof OPTIONS_TYPE = {}): DynamicModule {
     return {
+      global: true,
       module: ExampleMessagingModule,
       imports: [
         KafkaModule.registerAsync({
@@ -43,8 +45,9 @@ export class ExampleMessagingModule
     };
   }
 
-  static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
+  static registerAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     return {
+      global: true,
       module: ExampleMessagingModule,
       imports: [
         ...(options.imports ?? []),

@@ -1,6 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_CLIENT } from './kafka.tokens';
+import { KafkaConfig } from './kafka.config';
 import { KafkaModuleOptions } from './kafka.interfaces';
 import { normalizeKafkaOptions } from './kafka.options';
 import { KafkaAdminService } from './kafka-admin.service';
@@ -22,6 +24,7 @@ export class KafkaModule extends ConfigurableModuleClass {
     return {
       module: KafkaModule,
       imports: [
+        ConfigModule.forFeature(KafkaConfig),
         ClientsModule.register([
           {
             name: KAFKA_CLIENT,
@@ -61,10 +64,12 @@ export class KafkaModule extends ConfigurableModuleClass {
     return {
       module: KafkaModule,
       imports: [
+        ConfigModule.forFeature(KafkaConfig),
         ...(options.imports ?? []),
         ClientsModule.registerAsync([
           {
             name: KAFKA_CLIENT,
+            imports: options.imports,
             inject: [KAFKA_MODULE_OPTIONS],
             extraProviders: [optionsProvider],
             useFactory: (kafkaOptions: Required<KafkaModuleOptions>) => ({

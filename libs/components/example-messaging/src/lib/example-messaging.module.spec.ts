@@ -5,10 +5,11 @@ import { EXAMPLE_KAFKA_TOPICS } from './example-topics';
 
 describe('ExampleMessagingModule', () => {
     it('builds a dynamic module with explicit topic creation options', () => {
-        const dynamicModule = ExampleMessagingModule.forRoot({
+        const dynamicModule = ExampleMessagingModule.register({
             ensureTopics: true,
         });
 
+        expect(dynamicModule.global).toBe(true);
         expect(dynamicModule.module).toBe(ExampleMessagingModule);
         expect(dynamicModule.imports).toHaveLength(1);
         expect(dynamicModule.providers).toEqual([
@@ -22,8 +23,9 @@ describe('ExampleMessagingModule', () => {
     });
 
     it('defaults ensureTopics to true when no options are passed', () => {
-        const dynamicModule = ExampleMessagingModule.forRoot();
+        const dynamicModule = ExampleMessagingModule.register();
 
+        expect(dynamicModule.global).toBe(true);
         expect(dynamicModule.providers).toEqual([
             {
                 provide: EXAMPLE_MESSAGING_MODULE_OPTIONS,
