@@ -23,6 +23,29 @@ updates:
           - react-dom
           - '@types/react'
           - '@types/react-dom'
+      eslint:
+        patterns:
+          - eslint
+          - '@eslint/*'
+          - 'eslint-*'
+          - eslint-plugin-*
+          - eslint-config-*
+      jest:
+        patterns:
+          - jest
+          - jest-*
+          - '@jest/*'
+          - babel-jest
+          - ts-jest
+          - '@testing-library/*'
+      typescript:
+        patterns:
+          - typescript
+          - ts-node
+          - '@types/*'
+      module-federation:
+        patterns:
+          - '@module-federation/*'
     commit-message:
       prefix: deps
       include: scope
@@ -34,6 +57,10 @@ updates:
       day: monday
       time: '08:00'
       timezone: America/Sao_Paulo
+    groups:
+      github-actions:
+        patterns:
+          - '*'
     commit-message:
       prefix: ci
       include: scope
