@@ -1,6 +1,6 @@
 import { KafkaAdminService } from '@kafka-base-implementation/core/kafka';
 import { ExampleMessagingModule } from './example-messaging.module';
-import { EXAMPLE_MESSAGING_MODULE_OPTIONS } from './example-messaging.tokens';
+import { EXAMPLE_MESSAGING_MODULE_OPTIONS } from './example-messaging.module-definition';
 import { EXAMPLE_KAFKA_TOPICS } from './example-topics';
 
 describe('ExampleMessagingModule', () => {
@@ -10,6 +10,7 @@ describe('ExampleMessagingModule', () => {
     });
 
     expect(dynamicModule.module).toBe(ExampleMessagingModule);
+    expect(dynamicModule.imports).toHaveLength(1);
     expect(dynamicModule.providers).toEqual([
       {
         provide: EXAMPLE_MESSAGING_MODULE_OPTIONS,

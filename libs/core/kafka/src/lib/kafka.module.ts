@@ -1,20 +1,21 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { KAFKA_CLIENT, KAFKA_MODULE_OPTIONS } from './kafka.tokens';
-import {
-  KafkaModuleAsyncOptions,
-  KafkaModuleOptions,
-} from './kafka.interfaces';
+import { KAFKA_CLIENT } from './kafka.tokens';
 import { normalizeKafkaOptions } from './kafka.options';
 import { KafkaAdminService } from './kafka-admin.service';
 import { KafkaService } from './kafka.service';
+import {
+  ASYNC_OPTIONS_TYPE,
+  ConfigurableModuleClass,
+  KAFKA_MODULE_OPTIONS,
+  OPTIONS_TYPE,
+} from './kafka.module-definition';
 
-@Global()
 @Module({
   controllers: [],
 })
-export class KafkaModule {
-  static register(options: KafkaModuleOptions = {}): DynamicModule {
+export class KafkaModule extends ConfigurableModuleClass {
+  static register(options: typeof OPTIONS_TYPE = {}): DynamicModule {
     const kafkaOptions = normalizeKafkaOptions(options);
 
     return {
@@ -48,7 +49,7 @@ export class KafkaModule {
     };
   }
 
-  static registerAsync(options: KafkaModuleAsyncOptions): DynamicModule {
+  static registerAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     return {
       module: KafkaModule,
       imports: [
@@ -60,7 +61,8 @@ export class KafkaModule {
             inject: options.inject,
             useFactory: async (...args) => {
               const kafkaOptions = normalizeKafkaOptions(
-                await options.useFactory(...args),
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                await options.useFactory!(...args),
               );
 
               return {
@@ -85,7 +87,8 @@ export class KafkaModule {
           provide: KAFKA_MODULE_OPTIONS,
           inject: options.inject,
           useFactory: async (...args) =>
-            normalizeKafkaOptions(await options.useFactory(...args)),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            normalizeKafkaOptions(await options.useFactory!(...args)),
         },
         KafkaService,
       ],

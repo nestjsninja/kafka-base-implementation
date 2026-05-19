@@ -30,11 +30,9 @@ import { AppService } from './app.service';
         groupId: producerApiConfig.kafkaGroupId,
       }),
     }),
-    ExampleMessagingModule.forRoot({
-      ensureTopics: true,
-    }),
+    ExampleMessagingModule.forRoot({ ensureTopics: true }),
   ],
   controllers: [AppController, AppKafkaController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
