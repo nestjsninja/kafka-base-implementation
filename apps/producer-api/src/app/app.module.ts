@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ExampleMessagingModule } from '@kafka-base-implementation/components/example-messaging';
-import {
-  KafkaConfig,
-  KafkaModule,
-  KafkaModuleOptions,
-} from '@kafka-base-implementation/core/kafka';
+import { KafkaConfig } from '@kafka-base-implementation/core/kafka';
 import { AppController } from './app.controller';
-import { ProducerApiConfig, ProducerApiConfigOptions } from './app.config';
+import { ProducerApiConfig } from './app.config';
 import { AppKafkaController } from './app.kafka-controller';
 import { AppService } from './app.service';
 
@@ -19,18 +15,7 @@ import { AppService } from './app.service';
       isGlobal: true,
       load: [KafkaConfig, ProducerApiConfig],
     }),
-    KafkaModule.registerAsync({
-      inject: [KafkaConfig.KEY, ProducerApiConfig.KEY],
-      useFactory: (
-        kafkaConfig: ConfigType<typeof KafkaConfig>,
-        producerApiConfig: ProducerApiConfigOptions,
-      ): KafkaModuleOptions => ({
-        brokers: kafkaConfig.brokers,
-        clientId: producerApiConfig.kafkaClientId,
-        groupId: producerApiConfig.kafkaGroupId,
-      }),
-    }),
-    ExampleMessagingModule.forRoot({ ensureTopics: true }),
+    ExampleMessagingModule.forRoot(),
   ],
   controllers: [AppController, AppKafkaController],
   providers: [AppService],

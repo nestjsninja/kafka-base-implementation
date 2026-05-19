@@ -1,10 +1,10 @@
 import { DynamicModule, Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import {
-  KafkaConfig,
   KafkaModule,
   KafkaAdminService,
 } from '@kafka-base-implementation/core/kafka';
+import { ExampleMessagingConfig } from './example-messaging.config';
 import { ExampleMessagingModuleOptions } from './example-messaging.interfaces';
 import {
   ASYNC_OPTIONS_TYPE,
@@ -12,6 +12,7 @@ import {
   EXAMPLE_MESSAGING_MODULE_OPTIONS,
   OPTIONS_TYPE,
 } from './example-messaging.module-definition';
+import { ExampleMessagingService } from './example-messaging.service';
 import { EXAMPLE_KAFKA_TOPICS } from './example-topics';
 
 @Module({})
@@ -23,20 +24,22 @@ export class ExampleMessagingModule
       module: ExampleMessagingModule,
       imports: [
         KafkaModule.registerAsync({
-          inject: [KafkaConfig.KEY],
-          useFactory: (kafkaConfig: ConfigType<typeof KafkaConfig>) => ({
-            brokers: kafkaConfig.brokers,
-            clientId: kafkaConfig.clientId,
-            groupId: kafkaConfig.groupId,
+          ...ExampleMessagingConfig.asProvider(),
+          useFactory: (config: ConfigType<typeof ExampleMessagingConfig>) => ({
+            brokers: config.brokers,
+            clientId: config.clientId,
+            groupId: config.groupId,
           }),
         }),
       ],
       providers: [
+        ExampleMessagingService,
         {
           provide: EXAMPLE_MESSAGING_MODULE_OPTIONS,
-          useValue: { ensureTopics: options.ensureTopics ?? false },
+          useValue: { ensureTopics: options.ensureTopics ?? true },
         },
       ],
+      exports: [ExampleMessagingService],
     };
   }
 
@@ -46,25 +49,27 @@ export class ExampleMessagingModule
       imports: [
         ...(options.imports ?? []),
         KafkaModule.registerAsync({
-          inject: [KafkaConfig.KEY],
-          useFactory: (kafkaConfig: ConfigType<typeof KafkaConfig>) => ({
-            brokers: kafkaConfig.brokers,
-            clientId: kafkaConfig.clientId,
-            groupId: kafkaConfig.groupId,
+          ...ExampleMessagingConfig.asProvider(),
+          useFactory: (config: ConfigType<typeof ExampleMessagingConfig>) => ({
+            brokers: config.brokers,
+            clientId: config.clientId,
+            groupId: config.groupId,
           }),
         }),
       ],
       providers: [
+        ExampleMessagingService,
         {
           provide: EXAMPLE_MESSAGING_MODULE_OPTIONS,
           inject: options.inject ?? [],
           useFactory: async (...args) => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const opts = await options.useFactory!(...args);
-            return { ensureTopics: opts.ensureTopics ?? false };
+            return { ensureTopics: opts.ensureTopics ?? true };
           },
         },
       ],
+      exports: [ExampleMessagingService],
     };
   }
 

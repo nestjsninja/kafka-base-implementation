@@ -3,14 +3,16 @@ import {
   EXAMPLE_TOPICS,
   ExampleMessageCreatedEvent,
   ExampleMessageProcessedEvent,
+  ExampleMessagingService,
 } from '@kafka-base-implementation/components/example-messaging';
-import { KafkaService } from '@kafka-base-implementation/core/kafka';
 
 @Injectable()
 export class AppService {
   private readonly receivedMessages: ExampleMessageCreatedEvent[] = [];
 
-  constructor(private readonly kafkaService: KafkaService) {}
+  constructor(
+    private readonly exampleMessagingService: ExampleMessagingService,
+  ) { }
 
   getData() {
     return {
@@ -33,10 +35,7 @@ export class AppService {
       result: event.text.toUpperCase(),
     };
 
-    await this.kafkaService.emit(
-      EXAMPLE_TOPICS.MESSAGE_PROCESSED,
-      processedEvent,
-    );
+    await this.exampleMessagingService.emitMessageProcessed(processedEvent);
 
     return processedEvent;
   }

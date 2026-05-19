@@ -1,3 +1,3 @@
 export interface ExampleMessagingModuleOptions {
-  ensureTopics?: boolean;
+  ensureTopics?: boolean; // defaults to true
 }

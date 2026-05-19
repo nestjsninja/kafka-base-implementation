@@ -3,15 +3,17 @@ import {
   EXAMPLE_TOPICS,
   ExampleMessageCreatedEvent,
   ExampleMessageProcessedEvent,
+  ExampleMessagingService,
 } from '@kafka-base-implementation/components/example-messaging';
-import { KafkaService } from '@kafka-base-implementation/core/kafka';
 import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class AppService {
   private readonly processedMessages: ExampleMessageProcessedEvent[] = [];
 
-  constructor(private readonly kafkaService: KafkaService) {}
+  constructor(
+    private readonly exampleMessagingService: ExampleMessagingService,
+  ) { }
 
   getData() {
     return {
@@ -29,7 +31,7 @@ export class AppService {
       createdAt: new Date().toISOString(),
     };
 
-    await this.kafkaService.emit(EXAMPLE_TOPICS.MESSAGE_CREATED, event);
+    await this.exampleMessagingService.emitMessageCreated(event);
 
     return {
       topic: EXAMPLE_TOPICS.MESSAGE_CREATED,
