@@ -34,15 +34,39 @@ export class KafkaAdminService {
     await admin.connect();
 
     try {
+      const existingTopicNames = new Set(await admin.listTopics());
+      const missingTopics = topics.filter(
+        ({ topic }) => !existingTopicNames.has(topic),
+      );
+      const existingTopics = topics.filter(({ topic }) =>
+        existingTopicNames.has(topic),
+      );
+
+      if (existingTopics.length > 0) {
+        this.logger.log(
+          `Kafka topics already exist: ${existingTopics
+            .map(({ topic }) => topic)
+            .join(', ')}`,
+        );
+      }
+
+      if (missingTopics.length === 0) {
+        return false;
+      }
+
       const created = await admin.createTopics({
         waitForLeaders: true,
-        topics,
+        topics: missingTopics,
       });
 
       this.logger.log(
         created
-          ? `Created Kafka topics: ${topicNames}`
-          : `Kafka topics already exist: ${topicNames}`,
+          ? `Created Kafka topics: ${missingTopics
+            .map(({ topic }) => topic)
+            .join(', ')}`
+          : `Kafka topics already exist: ${missingTopics
+            .map(({ topic }) => topic)
+            .join(', ')}`,
       );
 
       return created;
