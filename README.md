@@ -1,5 +1,7 @@
 # Kafka Base Implementation
 
+[![Quality Gate](https://github.com/nestjsninja/kafka-base-implementation/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/nestjsninja/kafka-base-implementation/actions/workflows/quality-gate.yml)
+
 Base Nx monorepo with two NestJS applications that communicate through Kafka using shared infrastructure code.
 
 The goal of this repository is to provide a small but complete example that can be reused when adding more NestJS apps that need Kafka messaging.
