@@ -7,6 +7,8 @@ import {
 import {
   KafkaMicroserviceOptions,
   KafkaModuleOptions,
+  KafkaTransportOptions,
+  NormalizedKafkaModuleOptions,
 } from './kafka.interfaces';
 
 export function parseKafkaBrokers(value?: string): string[] {
@@ -20,29 +22,59 @@ export function parseKafkaBrokers(value?: string): string[] {
 
 export function normalizeKafkaOptions(
   options: KafkaModuleOptions = {},
-): Required<KafkaModuleOptions> {
+): NormalizedKafkaModuleOptions {
+  const brokers = options.brokers ?? getConfiguredBrokers(options);
+  const clientId = options.clientId ?? options.client?.clientId;
+  const groupId = options.groupId ?? options.consumer?.groupId;
+
   return {
-    brokers: options.brokers ?? DEFAULT_KAFKA_BROKERS,
-    clientId: options.clientId ?? DEFAULT_KAFKA_CLIENT_ID,
-    groupId: options.groupId ?? DEFAULT_KAFKA_GROUP_ID,
+    ...options,
+    brokers: brokers ?? DEFAULT_KAFKA_BROKERS,
+    clientId: clientId ?? DEFAULT_KAFKA_CLIENT_ID,
+    groupId: groupId ?? DEFAULT_KAFKA_GROUP_ID,
+  };
+}
+
+export function createKafkaTransportOptions(
+  options: KafkaModuleOptions = {},
+): KafkaTransportOptions {
+  const kafkaOptions = normalizeKafkaOptions(options);
+
+  return {
+    postfixId: kafkaOptions.postfixId,
+    client: {
+      ...(kafkaOptions.client ?? {}),
+      clientId: kafkaOptions.clientId,
+      brokers: kafkaOptions.brokers,
+    },
+    consumer: {
+      ...(kafkaOptions.consumer ?? {}),
+      groupId: kafkaOptions.groupId,
+    },
+    run: kafkaOptions.run,
+    subscribe: kafkaOptions.subscribe,
+    producer: kafkaOptions.producer,
+    send: kafkaOptions.send,
+    serializer: kafkaOptions.serializer,
+    deserializer: kafkaOptions.deserializer,
+    parser: kafkaOptions.parser,
+    producerOnlyMode: kafkaOptions.producerOnlyMode,
   };
 }
 
 export function createKafkaMicroserviceOptions(
   options: KafkaMicroserviceOptions,
 ): KafkaOptions {
-  const kafkaOptions = normalizeKafkaOptions(options);
-
   return {
     transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: kafkaOptions.clientId,
-        brokers: kafkaOptions.brokers,
-      },
-      consumer: {
-        groupId: kafkaOptions.groupId,
-      },
-    },
+    options: createKafkaTransportOptions(options),
   };
+}
+
+function getConfiguredBrokers(
+  options: KafkaModuleOptions,
+): string[] | undefined {
+  return Array.isArray(options.client?.brokers)
+    ? options.client.brokers
+    : undefined;
 }

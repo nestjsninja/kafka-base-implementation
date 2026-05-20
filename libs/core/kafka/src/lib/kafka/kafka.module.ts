@@ -3,8 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_CLIENT } from './kafka.tokens';
 import { KafkaConfig } from './kafka.config';
-import { KafkaModuleOptions } from './kafka.interfaces';
-import { normalizeKafkaOptions } from './kafka.options';
+import { NormalizedKafkaModuleOptions } from './kafka.interfaces';
+import {
+  createKafkaTransportOptions,
+  normalizeKafkaOptions,
+} from './kafka.options';
 import { KafkaAdminService } from './kafka-admin.service';
 import { KafkaService } from './kafka.service';
 import {
@@ -35,15 +38,7 @@ export class KafkaModule extends ConfigurableModuleClass {
           {
             name: KAFKA_CLIENT,
             transport: Transport.KAFKA,
-            options: {
-              client: {
-                clientId: kafkaOptions.clientId,
-                brokers: kafkaOptions.brokers,
-              },
-              consumer: {
-                groupId: kafkaOptions.groupId,
-              },
-            },
+            options: createKafkaTransportOptions(kafkaOptions),
           },
         ]),
       ],
@@ -89,17 +84,9 @@ export class KafkaModule extends ConfigurableModuleClass {
             imports: options.imports,
             inject: [KAFKA_MODULE_OPTIONS],
             extraProviders: [optionsProvider],
-            useFactory: (kafkaOptions: Required<KafkaModuleOptions>) => ({
+            useFactory: (kafkaOptions: NormalizedKafkaModuleOptions) => ({
               transport: Transport.KAFKA,
-              options: {
-                client: {
-                  clientId: kafkaOptions.clientId,
-                  brokers: kafkaOptions.brokers,
-                },
-                consumer: {
-                  groupId: kafkaOptions.groupId,
-                },
-              },
+              options: createKafkaTransportOptions(kafkaOptions),
             }),
           },
         ]),

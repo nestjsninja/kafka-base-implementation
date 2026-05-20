@@ -7,8 +7,15 @@ describe('KafkaService', () => {
   let service: KafkaService;
   const client = {
     close: jest.fn(),
+    commitOffsets: jest.fn(),
     connect: jest.fn(),
     emit: jest.fn(() => of(undefined)),
+    emitBatch: jest.fn(() => of(undefined)),
+    consumer: { type: 'consumer' },
+    producer: { type: 'producer' },
+    send: jest.fn(() => of({ ok: true })),
+    subscribeToResponseOf: jest.fn(),
+    unwrap: jest.fn(() => ({ type: 'raw-client' })),
   };
 
   beforeEach(async () => {
@@ -52,5 +59,71 @@ describe('KafkaService', () => {
 
     expect(client.emit).toHaveBeenCalledTimes(1);
     expect(client.emit).toHaveBeenCalledWith('example.topic', payload);
+  });
+
+  it('returns an emit observable when requested', (done) => {
+    const payload = { id: 'message-id', text: 'hello kafka' };
+
+    service.emit$('example.topic', payload).subscribe(() => {
+      expect(client.emit).toHaveBeenCalledWith('example.topic', payload);
+      done();
+    });
+  });
+
+  it('emits batches to the requested topic', async () => {
+    const messages = [{ id: 'message-id', text: 'hello kafka' }];
+
+    await service.emitBatch('example.topic', messages);
+
+    expect(client.emitBatch).toHaveBeenCalledWith('example.topic', {
+      messages,
+    });
+  });
+
+  it('sends request-response messages', (done) => {
+    const payload = { id: 'message-id', text: 'hello kafka' };
+
+    service.send('example.request', payload).subscribe((response) => {
+      expect(response).toEqual({ ok: true });
+      expect(client.send).toHaveBeenCalledWith('example.request', payload);
+      done();
+    });
+  });
+
+  it('awaits request-response messages', async () => {
+    const payload = { id: 'message-id', text: 'hello kafka' };
+
+    await expect(service.request('example.request', payload)).resolves.toEqual({
+      ok: true,
+    });
+  });
+
+  it('subscribes to response patterns', () => {
+    service.subscribeToResponseOf('example.request');
+
+    expect(client.subscribeToResponseOf).toHaveBeenCalledWith(
+      'example.request',
+    );
+  });
+
+  it('commits offsets through the Kafka client', async () => {
+    const offsets = [
+      {
+        topic: 'example.topic',
+        partition: 0,
+        offset: '1',
+      },
+    ];
+
+    await service.commitOffsets(offsets);
+
+    expect(client.commitOffsets).toHaveBeenCalledWith(offsets);
+  });
+
+  it('exposes the underlying Kafka client and native handles', () => {
+    expect(service.getClient()).toBe(client);
+    expect(service.getConsumer()).toBe(client.consumer);
+    expect(service.getProducer()).toBe(client.producer);
+    expect(service.unwrap()).toEqual({ type: 'raw-client' });
   });
 });

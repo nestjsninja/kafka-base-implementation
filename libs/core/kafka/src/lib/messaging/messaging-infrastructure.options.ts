@@ -1,4 +1,4 @@
-import { KafkaModuleOptions } from '../kafka';
+import { KafkaModuleOptions, NormalizedKafkaModuleOptions } from '../kafka';
 import {
   MessagingInfrastructureModuleOptions,
   MessagingTopicProvisionerOptions,
@@ -14,12 +14,15 @@ export function normalizeMessagingInfrastructureOptions(
 }
 
 export function resolveKafkaOptions(
-  config: Required<KafkaModuleOptions> | undefined,
+  config: NormalizedKafkaModuleOptions | undefined,
   options: MessagingInfrastructureModuleOptions,
 ): KafkaModuleOptions {
   return {
+    ...options,
     brokers: options.brokers ?? config?.brokers,
     clientId: options.clientId ?? config?.clientId,
     groupId: options.groupId ?? config?.groupId,
+    client: options.client ?? config?.client,
+    consumer: options.consumer ?? config?.consumer,
   };
 }

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ITopicConfig, Kafka } from 'kafkajs';
-import { KafkaModuleOptions } from './kafka.interfaces';
+import { NormalizedKafkaModuleOptions } from './kafka.interfaces';
 import { KAFKA_MODULE_OPTIONS } from './kafka.module-definition';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class KafkaAdminService {
 
   constructor(
     @Inject(KAFKA_MODULE_OPTIONS)
-    private readonly options: Required<KafkaModuleOptions>,
+    private readonly options: NormalizedKafkaModuleOptions,
   ) { }
 
   async ensureTopics(topics: ITopicConfig[]): Promise<boolean> {

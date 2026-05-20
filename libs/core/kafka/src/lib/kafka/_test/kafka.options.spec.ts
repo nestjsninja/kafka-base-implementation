@@ -1,5 +1,6 @@
 import { Transport } from '@nestjs/microservices';
 import {
+  createKafkaTransportOptions,
   createKafkaMicroserviceOptions,
   normalizeKafkaOptions,
   parseKafkaBrokers,
@@ -31,6 +32,24 @@ describe('kafka options', () => {
     });
   });
 
+  it('normalizes options from nested Nest Kafka client and consumer config', () => {
+    expect(
+      normalizeKafkaOptions({
+        client: {
+          brokers: ['nested-broker:9092'],
+          clientId: 'nested-client',
+        },
+        consumer: {
+          groupId: 'nested-group',
+        },
+      }),
+    ).toMatchObject({
+      brokers: ['nested-broker:9092'],
+      clientId: 'nested-client',
+      groupId: 'nested-group',
+    });
+  });
+
   it('normalizes missing options with local defaults', () => {
     expect(normalizeKafkaOptions()).toEqual({
       brokers: ['localhost:9094'],
@@ -56,6 +75,52 @@ describe('kafka options', () => {
         consumer: {
           groupId: 'producer-api-group',
         },
+      },
+    });
+  });
+
+  it('passes through advanced Nest Kafka transport options', () => {
+    expect(
+      createKafkaTransportOptions({
+        brokers: ['localhost:9094'],
+        clientId: 'producer-api-client',
+        groupId: 'producer-api-group',
+        producerOnlyMode: true,
+        postfixId: '-custom',
+        subscribe: {
+          fromBeginning: true,
+        },
+        run: {
+          autoCommit: false,
+        },
+        producer: {
+          allowAutoTopicCreation: false,
+        },
+        send: {
+          acks: -1,
+        },
+      }),
+    ).toEqual({
+      client: {
+        clientId: 'producer-api-client',
+        brokers: ['localhost:9094'],
+      },
+      consumer: {
+        groupId: 'producer-api-group',
+      },
+      producerOnlyMode: true,
+      postfixId: '-custom',
+      subscribe: {
+        fromBeginning: true,
+      },
+      run: {
+        autoCommit: false,
+      },
+      producer: {
+        allowAutoTopicCreation: false,
+      },
+      send: {
+        acks: -1,
       },
     });
   });

@@ -265,8 +265,13 @@ Main core pieces:
 
 - `KafkaModule.registerAsync(...)`: registers a Kafka client using Nest module config.
 - `KafkaService.emit(topic, payload)`: publishes Kafka events.
+- `KafkaService.send(...)` / `KafkaService.request(...)`: uses Nest Kafka request-response patterns.
+- `KafkaService.subscribeToResponseOf(...)`: subscribes reply topics before connecting for request-response flows.
+- `KafkaService.getClient()`: exposes the underlying Nest `ClientKafka` when an advanced feature is not wrapped.
 - `KafkaAdminService.ensureTopics(...)`: creates required Kafka topics with explicit topic config.
 - `createKafkaMicroserviceOptions(...)`: creates the Nest Kafka microservice transport options used in `main.ts`.
+
+`KafkaModuleOptions` keeps shorthand `brokers`, `clientId`, and `groupId`, but also accepts Nest Kafka transport options such as `client`, `consumer`, `run`, `subscribe`, `producer`, `send`, `serializer`, `deserializer`, `parser`, `producerOnlyMode`, and `postfixId`.
 
 ## Example Messaging Component
 

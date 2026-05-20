@@ -4,12 +4,12 @@ import {
   DEFAULT_KAFKA_CLIENT_ID,
   DEFAULT_KAFKA_GROUP_ID,
 } from './kafka.constants';
-import { KafkaModuleOptions } from './kafka.interfaces';
+import { NormalizedKafkaModuleOptions } from './kafka.interfaces';
 import { parseKafkaBrokers } from './kafka.options';
 
 export const KafkaConfig = registerAs(
   'kafkaModuleConfig',
-  (): Required<KafkaModuleOptions> => {
+  (): NormalizedKafkaModuleOptions => {
     return {
       brokers: parseKafkaBrokers(Env.getValue('KAFKA_BROKERS')),
       clientId: Env.getValue('KAFKA_CLIENT_ID', DEFAULT_KAFKA_CLIENT_ID),
