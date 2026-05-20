@@ -12,6 +12,7 @@ export class ExampleMessagingModule {
         MessagingInfrastructureModule.register({
           topics: EXAMPLE_KAFKA_TOPICS,
           ensureTopics: options.ensureTopics ?? true,
+          producerOnlyMode: true,
         }),
       ],
       providers: [ExampleMessagingService],

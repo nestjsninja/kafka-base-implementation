@@ -40,8 +40,7 @@ export function createKafkaTransportOptions(
 ): KafkaTransportOptions {
   const kafkaOptions = normalizeKafkaOptions(options);
 
-  return {
-    postfixId: kafkaOptions.postfixId,
+  return removeUndefinedProperties({
     client: {
       ...(kafkaOptions.client ?? {}),
       clientId: kafkaOptions.clientId,
@@ -59,7 +58,8 @@ export function createKafkaTransportOptions(
     deserializer: kafkaOptions.deserializer,
     parser: kafkaOptions.parser,
     producerOnlyMode: kafkaOptions.producerOnlyMode,
-  };
+    postfixId: kafkaOptions.postfixId,
+  });
 }
 
 export function createKafkaMicroserviceOptions(
@@ -77,4 +77,10 @@ function getConfiguredBrokers(
   return Array.isArray(options.client?.brokers)
     ? options.client.brokers
     : undefined;
+}
+
+function removeUndefinedProperties<T extends Record<string, unknown>>(value: T): T {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, propertyValue]) => propertyValue !== undefined),
+  ) as T;
 }

@@ -5,4 +5,5 @@ export * from './kafka.interfaces';
 export * from './kafka.module-definition';
 export * from './kafka.options';
 export * from './kafka.service';
+export * from './kafkajs-warnings';
 export * from './kafka.module';

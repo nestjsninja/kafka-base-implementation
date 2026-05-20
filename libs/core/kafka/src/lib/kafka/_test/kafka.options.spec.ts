@@ -59,13 +59,13 @@ describe('kafka options', () => {
   });
 
   it('creates Nest Kafka microservice transport options', () => {
-    expect(
-      createKafkaMicroserviceOptions({
-        brokers: ['localhost:9094'],
-        clientId: 'producer-api-client',
-        groupId: 'producer-api-group',
-      }),
-    ).toEqual({
+    const kafkaOptions = createKafkaMicroserviceOptions({
+      brokers: ['localhost:9094'],
+      clientId: 'producer-api-client',
+      groupId: 'producer-api-group',
+    });
+
+    expect(kafkaOptions).toEqual({
       transport: Transport.KAFKA,
       options: {
         client: {
@@ -77,6 +77,7 @@ describe('kafka options', () => {
         },
       },
     });
+    expect(kafkaOptions.options).not.toHaveProperty('postfixId');
   });
 
   it('passes through advanced Nest Kafka transport options', () => {

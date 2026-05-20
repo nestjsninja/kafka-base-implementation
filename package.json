@@ -6,7 +6,7 @@
     "node": ">=22 <23"
   },
   "scripts": {
-    "kafka:up": "docker compose up -d",
+    "kafka:up": "docker compose up --wait",
     "kafka:down": "docker compose down",
     "serve:producer": "KAFKAJS_NO_PARTITIONER_WARNING=1 nx serve producer-api",
     "serve:consumer": "KAFKAJS_NO_PARTITIONER_WARNING=1 nx serve consumer-api",

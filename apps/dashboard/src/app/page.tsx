@@ -222,8 +222,8 @@ function MessageList({
 
       <div className="message-list">
         {messages.length ? (
-          messages.map((message) => (
-            <pre key={`${message.id}-${title}`}>
+          messages.map((message, index) => (
+            <pre key={`${title}-${message.id}-${index}`}>
               {JSON.stringify(message, null, 2)}
             </pre>
           ))

@@ -4,9 +4,12 @@ import { NestFactory } from '@nestjs/core';
 import {
   KafkaConfig,
   createKafkaMicroserviceOptions,
+  suppressKafkaJsTimeoutNegativeWarning,
 } from '@kafka-base-implementation/core/kafka';
 import { ConsumerApiConfig } from './app/app.config';
 import { AppModule } from './app/app.module';
+
+suppressKafkaJsTimeoutNegativeWarning();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,6 +30,7 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix(globalPrefix);
   const port = consumerApiConfig.port;
+  await app.init();
   await app.startAllMicroservices();
   await app.listen(port);
   Logger.log(
