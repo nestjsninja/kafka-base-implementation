@@ -25,6 +25,12 @@ Install these before running the project:
 - npm
 - Docker Desktop, or another Docker runtime with Docker Compose support
 
+This project targets Node.js 22. If you use `nvm`, run:
+
+```sh
+nvm use
+```
+
 Check your local tools:
 
 ```sh
